@@ -1,0 +1,85 @@
+/* Quiz Section */
+#questions-container {
+    margin-top: 30px;
+}
+
+#questions-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#questions-list {
+    margin-top: 15px;
+}
+
+.question-item {
+    background-color: #f1f1f1;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.question-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.answers {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.answer-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.answer-item label {
+    margin-right: 10px;
+    font-weight: normal;
+    width: 70px;
+}
+
+.answer-item input {
+    flex-grow: 1;
+}
+
+.answer-item button {
+    background-color: #ddd;
+    margin-left: 10px;
+}
+
+.answer-item button:hover {
+    background-color: #ddd;
+}
+
+/* Correct Answer */
+.correct-answer {
+    margin-top: 10px;
+    font-style: italic;
+    color: #333;
+}
+
+/* Add/Remove Question or Option Buttons */
+button[type="button"] {
+    background-color:white;
+    margin-top: 10px;
+}
+
+button[type="button"]:hover {
+    background-color: white;
+}
+
+button[type="button"]:not(.add-option-button) {
+    background-color: white;
+}
+
+.custom-img{
+    width: 800px;   /* Set the width */
+    height: 450px;  /* Set the height */
+    object-fit: cover;  /* Ensures that the image covers the set dimensions without distorting */
+    padding: 6px;
+}

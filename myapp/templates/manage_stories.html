@@ -1,0 +1,352 @@
+{% extends 'adminbase.html' %}
+{% load static %}
+
+{% block title %}
+TRAS - Empowering Lives
+{% endblock %}
+
+{% block icons %}
+  <!-- Favicons -->
+  <link href="{% static 'website/assets/img/logo.png' %}" rel="icon">
+  <link href="{% static 'website/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+{% endblock %}
+
+{% block fonts %}
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% endblock %}
+
+{% block css %}
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'website/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_css %}
+  <!-- Main CSS File -->
+  <link href="{% static 'website/assets/css/main.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/css/management.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<body class="index-page">
+    <main class="main container py-5">
+        <h1 class="text-center">Story Management</h1>
+
+
+    <div>
+        <button onclick="openAddStoryForm()" class="btn btn-primary">Add New Story</button>
+    </div>
+
+<!-- Story Form -->
+<div id="story-form-container" class="story-form-container mb-3" style="display: none;">
+    <form id="story-form">
+        <h2 class="text-left">Story Management</h2>
+        <input type="hidden" id="story-id" name="story_id">
+        
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required class="form-control"><br>
+        
+        <label for="pdf">PDF:</label>
+        <input type="file" id="pdf" name="pdf" accept=".pdf" class="form-control"><br>
+        
+        <div id="current-pdf-container" class="form-input"></div>
+        
+        <div id="questions-container" class="form-section">
+            <h3>Quiz Questions</h3>
+            <button type="button" onclick="addQuestion()" >Add Question</button>
+            <div id="questions-list"></div>
+        </div>
+        
+        <button type="submit" >Save</button>
+        <button type="button" onclick="closeStoryForm()">Cancel</button>
+    </form>
+</div>
+
+
+    <!-- Story Table -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="story-table">
+            {% for story in stories %}
+            <tr id="story-row-{{ story.id }}">
+                <td>{{ story.title }}</td>
+                <td>
+                    <button onclick="editStory('{{ story.id }}', '{{ story.title }}', '{{ story.questions|escapejs }}',  '{{ story.pdf }}')">Edit</button>
+                    <button onclick="deleteStory('{{ story.id }}')">Delete</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No stories available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+   
+    {% csrf_token %}
+</div>
+    <script>
+        // CSRF token utility
+        function getCsrfToken() {
+            const cookieValue = document.cookie.match(/csrftoken=([^;]+)/);
+            return cookieValue ? cookieValue[1] : null;
+        }
+        const csrfToken = getCsrfToken();
+
+        // DOM elements
+        const storyFormContainer = document.getElementById('story-form-container');
+        const storyForm = document.getElementById('story-form');
+        const storyTable = document.getElementById('story-table');
+
+        // Open Add Story form
+        function openAddStoryForm() {
+            storyForm.reset();
+            document.getElementById('story-id').value = '';
+            document.getElementById('questions-list').innerHTML = '';
+            const pdfContainer = document.getElementById('current-pdf-container');
+            pdfContainer.innerHTML = '';
+            storyFormContainer.style.display = 'block';
+        }
+
+        // Close form
+        function closeStoryForm() {
+            storyFormContainer.style.display = 'none';
+        }
+
+    
+ // Add a question
+function addQuestion(questionData = {}) {
+    const questionIndex = document.querySelectorAll('.question-item').length;
+    const questionId = `question-${questionIndex}`;
+    const questionHtml = `
+        <div id="${questionId}" class="question-item">
+            <label>Question:</label>
+            <input type="text" name="question-text" value="${questionData.question || ''}" required>
+            <div class="answers">
+                ${(questionData.options || []).map((option, i) => {
+                    const hasAlphabetPrefix = /^[A-Z]\. /.test(option);
+                    const letter = String.fromCharCode(65 + i);  // Get alphabet letter (A, B, C, etc.)
+
+     
+                    return `
+                        <div class="answer-item">
+                            <label>Option ${letter}:</label>
+                            <input type="text" name="option-text" value="${option}" required>
+                            <button type="button" onclick="removeAnswer(this)">Remove</button>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <button type="button" onclick="addAnswer('${questionId}')">Add Option</button>
+            <!-- Display Correct Answer as Text -->
+            <div class="correct-answer">
+                <strong>Correct Answer: </strong>
+                <span>${questionData.correct_answer || 'Not Set'}</span>
+            </div>
+            <label>Correct Answer:</label>
+            <select name="correct-answer">
+                ${(questionData.options || []).map((option, i) => {
+                    const letter = String.fromCharCode(65 + i);  // Get alphabet letter (A, B, C, etc.)
+                    return `
+                        <option value="${letter}" ${letter === questionData.correct_answer ? 'selected' : ''}>
+                            Option ${letter}
+                        </option>
+                    `;
+                }).join('')}
+            </select>
+            <button type="button" onclick="removeQuestion('${questionId}')">Remove Question</button>
+        </div>
+    `;
+    document.getElementById('questions-list').insertAdjacentHTML('beforeend', questionHtml);
+    updateCorrectAnswerOptions(questionId);
+}
+
+// Add an option to a question
+function addAnswer(questionId) {
+    const questionDiv = document.getElementById(questionId).querySelector('.answers');
+    const answerIndex = questionDiv.querySelectorAll('.answer-item').length;
+    const answerLetter = String.fromCharCode(65 + answerIndex);  // Dynamically create the letter (A, B, C, etc.)
+    const answerHtml = `
+        <div class="answer-item">
+            <label>Option ${answerLetter}:</label>
+            <input type="text" name="option-text" required>
+            <button type="button" onclick="removeAnswer(this)">Remove</button>
+        </div>
+    `;
+    questionDiv.insertAdjacentHTML('beforeend', answerHtml);
+    updateCorrectAnswerOptions(questionId);
+}
+
+// Update correct answer dropdown based on current options
+function updateCorrectAnswerOptions(questionId) {
+    const questionDiv = document.getElementById(questionId);
+    const options = Array.from(questionDiv.querySelectorAll('.answers input')).map((input, index) => {
+        const letter = String.fromCharCode(65 + index); // Get alphabet letter (A, B, C, etc.)
+        return `${letter}. ${input.value}`; // Concatenate letter with the value of the option
+    });
+    const correctAnswerSelect = questionDiv.querySelector('select[name="correct-answer"]');
+    
+    correctAnswerSelect.innerHTML = options.map((option, i) => {
+        const letter = String.fromCharCode(65 + i); // Get alphabet letter (A, B, C, etc.)
+        return `<option value="${letter}">Option ${letter}</option>`; // Use the letter for correct answer selection
+    }).join('');
+}
+
+// Remove an option
+function removeAnswer(button) {
+    const questionDiv = button.closest('.question-item');
+    button.parentElement.remove();
+    updateCorrectAnswerOptions(questionDiv.id);
+}
+
+// Remove a question
+function removeQuestion(questionId) {
+    document.getElementById(questionId).remove();
+}
+
+// Form Submission: Collect quiz data in the required JSON format
+storyForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(storyForm);
+    const questions = [];
+    document.querySelectorAll('.question-item').forEach((item) => {
+        const questionText = item.querySelector('input[name="question-text"]').value;
+        const options = Array.from(item.querySelectorAll('.answers input')).map((input, index) => {
+            const letter = String.fromCharCode(65 + index);  // Get alphabet letter (A, B, C, etc.)
+            let optionText = input.value;
+
+            // Regex to check if the option already starts with a letter and a dot (e.g., A. )
+            const hasAlphabetPrefix = /^[A-Z]\. /.test(optionText);
+
+            // Only prepend the letter if it doesn't already have the prefix
+            if (optionText && !hasAlphabetPrefix) {
+                optionText = `${letter}. ${optionText}`;
+            }
+
+            return optionText;  // Return the modified option
+        });
+        const correctAnswer = item.querySelector('select[name="correct-answer"]').value;
+        questions.push({ question: questionText, options, correct_answer: correctAnswer });
+    });
+    formData.set('quiz_questions', JSON.stringify(questions));
+    const storyId = formData.get('story_id');
+    const url = storyId ? `/update-story/${storyId}/` : '/add-story/';
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-CSRFToken': csrfToken },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            closeStoryForm();
+            location.reload(); 
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    });
+
+    
+});
+
+function editStory(id, name, quizQuestions, pdfUrl) {
+    const mediaUrl = '/media/';
+    if (!pdfUrl.startsWith(mediaUrl)) {
+        pdfUrl = mediaUrl + pdfUrl;
+    }
+
+    // Populate form fields
+    document.getElementById('story-id').value = id;
+    document.getElementById('name').value = name;
+
+    // Manage the current PDF display
+    const pdfContainer = document.getElementById('current-pdf-container');
+    pdfContainer.innerHTML = '';
+
+    if (pdfUrl) {
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.target = '_blank';
+        link.textContent = 'Click to view current PDF';
+        link.style.display = 'block';
+        link.style.marginBottom = '5px';
+
+        pdfContainer.appendChild(link);
+    }
+
+    // Parse quizQuestions
+    let parsedQuizQuestions = [];
+    try {
+        if (typeof quizQuestions === 'string') {
+            // Convert single quotes to double quotes for valid JSON
+            const formattedQuizQuestions = quizQuestions.replace(/'/g, '"');
+            parsedQuizQuestions = JSON.parse(formattedQuizQuestions);
+        } else {
+            parsedQuizQuestions = Array.isArray(quizQuestions) 
+                ? quizQuestions 
+                : JSON.parse(quizQuestions);
+        }
+    } catch (error) {
+        console.error('Error parsing quizQuestions:', error);
+        return; // Stop execution if parsing fails
+    }
+
+    // Populate the quiz questions and options
+    const questionsList = document.getElementById('questions-list');
+    questionsList.innerHTML = ''; // Clear existing questions
+
+    parsedQuizQuestions.forEach((questionData) => {
+        addQuestion(questionData);
+    });
+
+    // Show the form
+    storyFormContainer.style.display = 'block';
+}
+
+
+// Delete Story
+function deleteStory(id) {
+    if (confirm('Are you sure you want to delete this story?')) {
+        fetch(`/delete-story/${id}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server error occurred');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById(`story-row-${id}`).remove();
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            });
+    }
+}
+    </script>
+</body>
+{% endblock %}

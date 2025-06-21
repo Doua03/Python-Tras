@@ -1,0 +1,94 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRAS</title>
+
+  <!-- Favicons -->
+  <link href="{% static 'website/assets/img/logo.png' %}" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS -->
+  <link href="{% static 'website/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+
+  <link href="{% static 'website/assets/css/authentification.css' %}?v=2" rel="stylesheet">
+
+</head>
+
+<body class="index-page">
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid d-flex align-items-center">
+      <a href="authentification.html" class="logo d-flex align-items-center me-auto">
+        <img src="{% static 'website/assets/img/logo.png' %}" alt="TRAS Logo">
+      </a>
+      <i class="mobile-nav-toggle bi bi-list d-xl-none"></i>
+    </div>
+  </header>
+
+  <main class="main">
+    <section id="about" class="about section">
+      <div class="auth-gradient">
+        <h1>Hello Friend!</h1>
+        <p>Please provide the information to register your account.</p>
+        <p>Already have an account? <a href="{% url 'login' %}" class="login-link">Log In</a></p>
+      </div>
+      <div class="auth-white">
+        <h1>Register a New Account</h1>
+
+
+        <form method="POST" class="login-form">
+          {% csrf_token %}
+          <input type="hidden" name="role" value="{{ role }}">
+          <br>
+
+          <!-- Render form fields manually -->
+          <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+              <div class="alert alert-danger">
+                {{ form.username.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <br>
+
+          <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <div class="alert alert-danger">
+                {{ form.email.errors }}
+              </div>
+            {% endif %}
+          </div>
+<br>
+
+          <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+              <div class="alert alert-danger">
+                {{ form.password.errors }}
+              </div>
+            {% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-cta">Register</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Vendor JS -->
+  <script src="{% static 'website/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

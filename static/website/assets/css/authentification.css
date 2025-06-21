@@ -1,0 +1,129 @@
+:root {
+  --default-font: "Roboto", system-ui, sans-serif;
+  --heading-font: "Poppins", sans-serif;
+  --background-color: #ffffff;
+  --default-color: #000000;
+  --heading-color: #0cb9c1;
+  --accent-color: #037ef3;
+  --contrast-color: #ffffff;
+}
+
+body {
+  font-family: var(--default-font);
+  color: var(--default-color);
+  background-color: var(--background-color);
+  margin: 0;
+  height: 100vh;
+}
+
+html, body {
+  height: 100%; /* Ensure body spans the full viewport height */
+}
+
+.header {
+  --background-color: #ffffff;
+  --default-color: #000000;
+  --heading-color: #000000;
+  --contrast-color: #000000;
+  color: var(--default-color);
+  background-color: var(--background-color);
+  padding: 15px 0;
+  transition: all 0.5s;
+  z-index: 997;
+}
+
+.header .logo {
+  line-height: 1;
+}
+
+.header .logo img {
+  max-height: 50px;
+  margin-left: 100px;
+}
+
+@media (max-width: 1200px) {
+  .header .logo {
+    order: 1;
+  }
+}
+.about {
+  display: flex;
+  height: calc(100vh - 80px); /* Full viewport height minus header height */
+  align-items: stretch;
+  position: relative;
+  transition: all 0.5s ease
+}
+
+.about .auth-gradient, 
+.about .auth-white {
+  flex: 1; /* Ensures equal width */
+  height: 100%; /* Full height of parent container */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+}
+
+.about .auth-gradient {
+  background: linear-gradient(135deg, #5fb0e2, #9bcd3e, #ef9f20, #e72a6e);
+  color: var(--contrast-color);
+  text-align: center;
+}
+
+.about .auth-white {
+  background-color: var(--background-color);
+  color: var(--default-color);
+  text-align: center;
+  
+}
+
+.registration-form {
+  max-width: 500px; /* Wider form columns */
+  margin: 0 auto;
+  padding: 40px;
+  width: 100%; /* Make the form responsive */
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.input-group-text {
+  background-color: #f7f7f7; /* Subtle background for icon */
+  border: none;
+  border-right: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-group-text i {
+  font-size: 16px;
+  color: #666;
+}
+
+.input-group .form-control {
+  border-left: none;
+  box-shadow: none;
+}
+
+.input-group .form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 5px rgba(3, 126, 243, 0.5); /* Accent color glow */
+}
+
+.btn-cta {
+  background: linear-gradient(135deg,  #9bcd3e, #ef9f20);
+  color: var(--contrast-color);
+  padding: 10px 30px;
+  margin-top:30px ;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 0; /* No rounded corners */
+align-self: center;
+}
+
+

@@ -1,0 +1,269 @@
+{% extends 'mainbase.html' %}
+{% load static %}
+
+{% block title %}
+TRAS - Empowering Lives
+{% endblock %}
+
+{% block icons %}
+<!-- Favicons -->
+<link href="{% static 'website/assets/img/logo.png' %}" rel="icon">
+<link href="{% static 'website/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+{% endblock %}
+
+{% block fonts %}
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% endblock %}
+
+{% block css %}
+<!-- Vendor CSS Files -->
+<link href="{% static 'website/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'website/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+<link href="{% static 'website/assets/vendor/aos/aos.css' %}" rel="stylesheet">
+<link href="{% static 'website/assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+<link href="{% static 'website/assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_css %}
+<!-- Main CSS File -->
+<link href="{% static 'website/assets/css/main.css' %}" rel="stylesheet">
+<link href="{% static 'website/assets/css/management.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<body class="index-page">
+    <main class="main container py-5">
+        <h1 class="text-center">Let's learn a word : {{ word }}</h1>
+        
+    <div class="text-center mb-4">  
+        <img  src="{{ image_url }}" alt="Image of {{ word }}" class="custom-img" />
+    </div>
+    
+    <div class="text-center mb-4">
+    <!-- Audio Player to hear the word (initially set with audio source) -->
+    <audio id="audio-player" controls autoplay>
+        <source src="/media/audio/{{ word }}.mp3" type="audio/mpeg"> <!-- Adjust this path if necessary -->
+        Your browser does not support the audio element.
+    </audio>
+    </div>
+
+    <div class="text-center mb-4">
+    <!-- Button to play the pronunciation of the word -->
+    <button id="speak-btn" class="btn btn-primary">Hear the Word</button>
+
+    <!-- Button to repeat the pronunciation -->
+    <button id="repeat-btn" class="btn btn-primary">Repeat</button>
+
+
+
+    <!-- Button to record pronunciation -->
+    <button id="record-btn" class="btn btn-primary">Record Pronunciation</button>
+
+    <!-- Button to submit pronunciation for evaluation -->
+    <button id="submit-btn" class="btn btn-primary">Submit Pronunciation</button>
+    <button id="next-btn" class="btn btn-primary">Next</button>
+</div>
+    
+
+    <!-- Display feedback from the server -->
+    <div id="feedback" class="text-center mb-4"></div>
+</main>
+
+    <script>
+        // Handle the "Speak" button to play the word pronunciation
+        document.getElementById("speak-btn").addEventListener("click", function() {
+            fetch('/speak-word/', {
+                method: 'POST',
+                body: JSON.stringify({ "word": "{{ word }}" }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Set the audio player source and enable it
+                let audioPlayer = document.getElementById("audio-player");
+                audioPlayer.src = '/media/audio/' + data.audio_path.split('/').pop();
+                audioPlayer.play();  // Play the audio immediately
+            });
+        });
+
+        // Handle the "Repeat" button to replay the audio
+        document.getElementById("repeat-btn").addEventListener("click", function() {
+            var audioPlayer = document.getElementById("audio-player");
+            if (audioPlayer.src) {
+                audioPlayer.currentTime = 0;  // Start from the beginning
+                audioPlayer.play();
+            } else {
+                alert("No audio to repeat. Please use 'Hear the Word' first.");
+            }
+        });
+
+     // Handle the "Record Pronunciation" button to record audio
+        // Handle the "Next" button to refresh the page
+      document.getElementById("next-btn").addEventListener("click", function () {
+       window.location.reload(); // Refresh the current page
+      });
+
+
+
+         let mediaRecorder;
+        let audioChunks = [];
+        let recordedAudioFile;
+
+        // Handle the "Record Pronunciation" button to record audio
+        document.getElementById("record-btn").addEventListener("click", function () {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                return;  // Do nothing if already recording
+            }
+
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    if (!mediaRecorder || mediaRecorder.stream !== stream) {
+                        mediaRecorder = new MediaRecorder(stream);
+                        mediaRecorder.ondataavailable = event => {
+                            audioChunks.push(event.data);  // Collect audio chunks
+                        };
+
+                        mediaRecorder.onstop = () => {
+                            // Create a Blob from the audio chunks and convert it into a file
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            recordedAudioFile = new File([audioBlob], "recorded-audio.wav", { type: 'audio/wav' });
+                            audioChunks = []; // Reset chunks after the recording is stopped
+
+                            // Optional: Play the recorded audio
+                            const audioUrl = URL.createObjectURL(audioBlob);
+                            document.getElementById("audio-player").src = audioUrl;
+                        };
+                    }
+
+                    // Start recording and reset audioChunks for the new session
+                    audioChunks = [];
+                    mediaRecorder.start();
+                    setTimeout(() => mediaRecorder.stop(), 3000); // Automatically stop after 2 seconds
+                })
+                .catch(error => {
+                    console.error("Error accessing microphone:", error);
+                    alert("Failed to access your microphone. Please allow microphone access and try again.");
+                });
+        });
+
+        function convertWebMToWAV(webmBlob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    audioContext.decodeAudioData(event.target.result, function(buffer) {
+                        const wavBlob = bufferToWav(buffer);  // Convert buffer to WAV format
+                        resolve(wavBlob);  // Return the WAV blob
+                    }, reject);
+                };
+                reader.readAsArrayBuffer(webmBlob);
+            });
+        }
+
+        function bufferToWav(buffer) {
+            const numOfChannels = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            const length = buffer.length * numOfChannels * 2 + 44;  // WAV header size is 44 bytes
+            const arrayBuffer = new ArrayBuffer(length);
+            const view = new DataView(arrayBuffer);
+
+            // Write WAV header
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, length - 8, true);  // File size minus 8
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);  // Subchunk1Size
+            view.setUint16(20, 1, true);  // AudioFormat (1 = PCM)
+            view.setUint16(22, numOfChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * numOfChannels * 2, true);  // Byte rate
+            view.setUint16(32, numOfChannels * 2, true);  // Block align
+            view.setUint16(34, 16, true);  // Bits per sample (16-bit)
+            writeString(view, 36, 'data');
+            view.setUint32(40, buffer.length * numOfChannels * 2, true);  // Data chunk size
+
+            // Write audio data
+            let offset = 44; // Start of data section
+            for (let channel = 0; channel < numOfChannels; channel++) {
+                const channelData = buffer.getChannelData(channel);
+                for (let i = 0; i < buffer.length; i++) {
+                    const sample = Math.max(-1, Math.min(1, channelData[i]));
+                    view.setInt16(offset, sample * 0x7FFF, true);  // 16-bit PCM encoding
+                    offset += 2;
+                }
+            }
+
+            return new Blob([arrayBuffer], { type: 'audio/wav' });
+        }
+
+        // Utility function to write strings to the DataView (for header)
+        function writeString(view, offset, str) {
+            for (let i = 0; i < str.length; i++) {
+                view.setUint8(offset + i, str.charCodeAt(i));
+            }
+        }
+
+    // Handle the "Submit Pronunciation" button to submit recorded audio
+    document.getElementById("submit-btn").addEventListener("click", function () {
+            if (!recordedAudioFile) {
+                alert("No recorded audio found. Please record your pronunciation first.");
+                return;
+            }
+
+            convertWebMToWAV(recordedAudioFile).then(wavBlob => {
+                const wavFile = new File([wavBlob], "recorded-audio.wav", { type: 'audio/wav' });
+
+                const formData = new FormData();
+                formData.append("audio", wavFile);  // Submit the WAV file
+                formData.append("expected_word", "{{ word }}");
+
+                fetch('/assess-pronunciation/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Show feedback from the server
+                    const feedbackText = data.feedback || "No feedback received.";
+                    document.getElementById("feedback").innerText = feedbackText;
+
+                    // Read the feedback aloud
+                    readFeedbackAloud(feedbackText);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while submitting your pronunciation.");
+                });
+            }).catch(error => {
+                console.error("Error converting audio:", error);
+                alert("There was an issue converting your audio file.");
+            });
+        });
+
+        // Function to read feedback aloud
+        function readFeedbackAloud(feedbackText) {
+        const speech = new SpeechSynthesisUtterance(feedbackText);
+        
+        // Set the language to English (US)
+        speech.lang = "en-US";  // You can change this to "en-GB" for British English
+
+        // Optionally, choose a specific voice
+        const voices = window.speechSynthesis.getVoices();
+        const englishVoice = voices.find(voice => voice.lang === 'en-US');  // Change to 'en-GB' for British English
+        if (englishVoice) {
+            speech.voice = englishVoice;
+        }
+
+        // Speak the feedback
+        window.speechSynthesis.speak(speech);
+    }
+   
+       
+
+    </script>
+</body>
+{% endblock %}

@@ -1,0 +1,62 @@
+
+/*--------------------------------------------------------------
+# Global Footer
+--------------------------------------------------------------*/
+.footer {
+    color: var(--default-color, #333); /* Default text color with fallback */
+    background-color: #ffffff; /* Fallback to a light gray */
+    font-size: 14px;
+    padding-bottom: 50px;
+    line-height: 1.6;
+  }
+  
+  /* Footer Top Section */
+  .footer .footer-top {
+    padding-top: 50px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1); /* Replaced color-mix for compatibility */
+  }
+  
+  /* Footer Logo and Branding */
+  .footer .footer-about .logo {
+    line-height: 1;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .footer .footer-about .logo img {
+    max-height: 40px;
+    margin-right: 6px;
+  }
+  
+  .footer .footer-about .logo span {
+    color: var(--heading-color, #000); /* Fallback to black */
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-family: var(--heading-font, Arial, sans-serif); /* Fallback font */
+  }
+  
+  /* Footer Links and Text */
+  #footer {
+    color: #000; /* Default text color set to black for the entire footer */
+  }
+  
+
+  
+  /* Responsiveness for Small Screens */
+  @media (max-width: 768px) {
+    .footer {
+      font-size: 13px;
+      padding-bottom: 30px;
+    }
+  
+    .footer .footer-about .logo span {
+      font-size: 24px;
+    }
+  
+    .footer .footer-top {
+      padding-top: 30px;
+    }
+  }
+  

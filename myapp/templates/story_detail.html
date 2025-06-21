@@ -1,0 +1,206 @@
+{% extends 'mainbase.html' %}
+{% load static %}
+
+{% block title %}
+TRAS - Empowering Lives
+{% endblock %}
+
+
+{% block icons%}
+  <!-- Favicons -->
+  <link href="{% static  'website/assets/img/logo.png'%}" rel="icon">
+  <link href="{% static  'website/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+  {% endblock %}
+  {% block fonts %}
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  {% endblock %}
+  {% block css %}
+  <!-- Vendor CSS Files -->
+  <link href="{% static  'website/assets/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/bootstrap-icons/bootstrap-icons.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/aos/aos.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/glightbox/css/glightbox.min.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
+  {% endblock %}
+  {% block extra_css %}
+  <!-- Main CSS File -->
+  <link href="{% static  'website/assets/css/story_detail.css'%}" rel="stylesheet">
+  {% endblock %}
+
+    {% block content %}
+    <body class="index-page">
+    <main class="main">
+        <h1>{{ story.title }}</h1>
+        <div class="pdf-container" id="pdf-container">
+            <canvas id="pdf-render"></canvas>
+            <div>
+                <button class="button" onclick="prevPage()">Previous Page</button>
+                <button class="button" onclick="nextPage()">Next Page</button>
+                <p class="text-center">Page <span id="page-num"></span> of <span id="page-count"></span></p>
+            </div>
+            <audio class="audio" id="audio" controls>
+                <source id="audio-source" />
+            </audio>
+        </div>
+    
+        <!-- Quiz Section -->
+        <div id="quiz-container" style="display:none;">
+            <h2>Quiz</h2>
+            <div id="questions"></div>
+        </div>
+    </main>
+    
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+<script id="audio-files-data" type="application/json">{{ audio_files | safe }}</script>
+<script id="quiz-questions-data" type="application/json">{{ questions | safe }}</script>
+<script>
+    const audioFiles = JSON.parse(document.getElementById('audio-files-data').textContent);
+    const quizQuestions = JSON.parse(document.getElementById('quiz-questions-data').textContent);
+    const url = "{{ pdf_url }}"; // URL of the PDF
+    console.log(audioFiles);
+    let pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null;
+
+    const scale = 1.5;
+    const canvas = document.getElementById('pdf-render');
+    const ctx = canvas.getContext('2d');
+    const audioPlayer = document.getElementById('audio');
+    const audioSource = document.getElementById('audio-source');
+
+    // Load the PDF document
+    pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+        pdfDoc = pdfDoc_;
+        document.getElementById('page-count').textContent = pdfDoc.numPages;
+        renderPage(pageNum);
+    }).catch(error => {
+        console.error('Error loading PDF:', error);
+    });
+
+    function renderPage(num) {
+        pageRendering = true;
+        pdfDoc.getPage(num).then(page => {
+            const viewport = page.getViewport({ scale });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            page.render(renderContext).promise.then(() => {
+                pageRendering = false;
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            });
+            document.getElementById('page-num').textContent = num;
+            loadAudioForPage(num);  // Load audio for the current page
+
+            if (num === pdfDoc.numPages) {
+                document.getElementById('quiz-container').style.display = 'block';
+                loadQuiz();
+            }
+        }).catch(error => {
+            console.error('Error rendering page:', error);
+        });
+    }
+
+    function loadAudioForPage(pageNum) {
+        const audioFile = audioFiles[pageNum - 1]; // Dynamically fetch the audio file for the page
+        if (audioFile) {
+            const audioUrl = "/media/stories/audio/" + audioFile;
+            console.log('Loading audio for page ' + pageNum + ': ' + audioUrl);
+            
+            // Load and play the audio after user interaction
+            audioSource.src = audioUrl;
+            audioPlayer.load();
+            audioPlayer.play().catch(error => {
+                console.error('Error playing audio:', error);
+            });
+        } else {
+            console.warn('No audio file found for page ' + pageNum);
+        }
+    }
+
+    function nextPage() {
+        if (pageRendering || pageNum >= pdfDoc.numPages) return;
+        pageNum++;
+        renderPage(pageNum);
+    }
+
+    function prevPage() {
+        if (pageRendering || pageNum <= 1) return;
+        pageNum--;
+        renderPage(pageNum);
+    }
+
+    function loadQuiz() {
+        const questionsDiv = document.getElementById('questions');
+        quizQuestions.forEach((q, index) => {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question';
+            questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options';
+
+            q.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => checkAnswer(index, option); // Check the answer directly
+                optionsDiv.appendChild(button);
+            });
+
+            questionDiv.appendChild(optionsDiv);
+            questionsDiv.appendChild(questionDiv);
+        });
+    }
+
+    function checkAnswer(questionIndex, selectedAnswer) {
+        const question = quizQuestions[questionIndex];
+        const correctAnswer = question.correct_answer;
+
+        let message = '';  // This will hold the message for speech synthesis
+
+        // Find all buttons for this question
+        const buttons = document.querySelectorAll(`#questions .question:nth-child(${questionIndex + 1}) .options button`);
+
+        buttons.forEach(button => {
+            const buttonText = button.textContent.trim().charAt(0);
+
+            // If the current button is the selected one
+            if (button.textContent === selectedAnswer) {
+                if (buttonText !== correctAnswer) {
+                    button.style.backgroundColor = 'red'; // Wrong answer
+                    message = 'Wrong answer!';  // Set the message for wrong answer
+
+                } else {
+                    button.style.backgroundColor = 'green'; // Correct answer
+                    message = 'Good Job! Correct answer.';  // Set the message for correct answer
+
+                }
+            } else if (buttonText === correctAnswer) {
+                button.style.backgroundColor = 'green'; // Correct answer (not selected)
+
+            }
+
+            button.disabled = true;
+            // Cancel any ongoing speech to prevent repetition
+            speechSynthesis.cancel();
+
+            // Use the Web Speech API to say the message in English
+            const speech = new SpeechSynthesisUtterance(message);
+            speech.lang = 'en-US';  // Set language to English
+            speechSynthesis.speak(speech);
+        });
+    }
+</script>
+</body>
+{% endblock %}

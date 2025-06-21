@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- Page-Specific CSS -->
+  <link href="{% static 'website/assets/css/navbar.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/css/footer.css' %}" rel="stylesheet">
+
+  {% block icons %}
+  {% endblock %}
+  {% block fonts %}
+  {% endblock %}
+  {% block css %}
+  {% endblock %}
+  {% block extra_css %}
+  {% endblock %}
+</head>
+<body>
+  <!-- Header Section -->
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+  
+      <!-- Logo -->
+      <a href="{% url 'admin_dashboard' %}" class="logo d-flex align-items-center me-auto">
+        <img src="{% static 'website/assets/img/logo.png' %}" alt="Website Logo">
+      </a>
+  
+      <!-- Navigation Menu -->
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li>
+            <a href="{% url 'doctor_dashboard' %}" class="{% if request.resolver_match.url_name == 'doctor_dashboard' %}active{% endif %}">Home</a>
+          </li>
+          <li>
+          {% if user.is_authenticated %}
+          <!-- Messages Dropdown -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-envelope-fill"></i>
+              <span class="badge bg-danger">{{ messages_count }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              {% for message in user_messages %}
+              <li>
+                <a class="dropdown-item" href="{{ message.link }}">{{ message.content }}</a>
+              </li>
+              {% empty %}
+              <li>
+                <a class="dropdown-item" href="#">No new messages</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </li>
+  
+          <!-- Notifications Dropdown -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-bell-fill"></i>
+              <span class="badge bg-warning">{{ notifications_count }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              {% for notification in user_notifications %}
+              <li>
+                <a class="dropdown-item" href="{{ notification.link }}">{{ notification.content }}</a>
+              </li>
+              {% empty %}
+              <li>
+                <a class="dropdown-item" href="#">No new notifications</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </li>
+  
+          <!-- Logout -->
+          <li>
+            <a href="{% url 'login' %}">Logout</a>
+          </li>
+          {% endif %}
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer Section -->
+  <footer id="footer" class="footer light-background">
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-5 col-md-12 footer-about">
+          <a href="{% url 'admin_dashboard' %}" class="logo d-flex align-items-center">
+            <span class="sitename">TRAS</span>
+          </a>
+          <p>TRAS is dedicated to empowering parents of children with Down syndrome by providing engaging and tailored activities that support emotional recognition and language development.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

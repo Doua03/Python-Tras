@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Email Verification</title>
+    <style>
+        /* Inline CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #1a73e8;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <p>Dear {{ user.username }},</p>
+    <p>Thank you for registering! Please verify your email by clicking the link below:</p>
+    <p><a href="{{ verification_link }}" class="btn">Verify Email</a></p>
+    <p class="footer">Best regards,<br>Your Website Team</p>
+</body>
+</html>

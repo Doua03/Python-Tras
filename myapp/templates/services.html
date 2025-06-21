@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+TRAS - Empowering Lives
+{% endblock %}
+
+
+{% block icons%}
+  <!-- Favicons -->
+  <link href="{% static  'website/assets/img/logo.png'%}" rel="icon">
+  <link href="{% static  'website/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+  {% endblock %}
+  {% block fonts %}
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  {% endblock %}
+  {% block css %}
+  <!-- Vendor CSS Files -->
+  <link href="{% static  'website/assets/vendor/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/bootstrap-icons/bootstrap-icons.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/aos/aos.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/glightbox/css/glightbox.min.css'%}" rel="stylesheet">
+  <link href="{% static  'website/assets/vendor/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
+  {% endblock %}
+  {% block extra_css %}
+  <!-- Main CSS File -->
+  <link href="{% static  'website/assets/css/main.css'%}" rel="stylesheet">
+  {% endblock %}
+  <!-- =======================================================
+  * Template Name: Remember
+  * Template URL: https://bootstrapmade.com/remember-free-multipurpose-bootstrap-template/
+  * Updated: Aug 07 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+  {% block content %}
+<body class="index-page">
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="Services" class="hero section dark-background">
+
+      <img src="{% static  'website/assets/img/hero-bg.png'%}" alt="" data-aos="fade-in">
+
+      <div class="container text-center" data-aos="fade-up" data-aos-delay="100">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <h3>Empowering Lives</h3>
+            <h2>Creating Impact</h2>
+            <p>Tras for a happy kid!</p>
+            <a href="#about" class="btn-get-started">Start Exploring</a>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /Hero Section -->
+
+  
+
+    <!-- Why Us Section -->
+<section id="why-us" class="why-us section">
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>About Us</h2>
+    <div> <span class="description-title">Why choose Us ?</span></div>
+  </div><!-- End Section Title -->
+
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card-item">
+          <span>01</span>
+          <h4>Accessible information</h4>
+          <p>We ensures that children with Down syndrome and their caregivers have easy access to understandable explanations of the deficits they may encounter. These deficits can include cognitive, physical, sensory, or developmental challenges.</p>
+        </div>
+      </div><!-- Card Item -->
+
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-item">
+          <span>02</span>
+          <h4>Educational Resource</h4>
+          <p>Our platform serves as an educational resource, helping children with Down syndrome understand their unique traits and challenges in a positive and supportive environment. By providing clear definitions, it empowers them to better understand themselves and their abilities.</p>
+        </div>
+      </div><!-- Card Item -->
+
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="card-item">
+          <span>03</span>
+          <h4>Supportive Language</h4>
+          <p>Our platform uses language that is clear, simple, and supportive, avoiding stigmatizing or negative terminology. It focuses on highlighting strengths and promoting self-awareness and acceptance.</p>
+        </div>
+      </div><!-- Card Item -->
+
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card-item">
+          <span>04</span>
+          <h4>Personalized Experience</h4>
+          <p>Depending on the child’s age, cognitive level, and individual needs, we offer customizable content or interactive elements. This ensures that the information provided is tailored to the child’s comprehension level and preferences.</p>
+        </div>
+      </div><!-- Card Item -->
+
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-item">
+          <span>05</span>
+          <h4>Visual Aids</h4>
+          <p>Incorporating visual aids such as images, diagrams, or videos can enhance understanding and engagement, particularly for children who may have visual learning preferences or difficulties with reading comprehension.</p>
+        </div>
+      </div><!-- Card Item -->
+
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="card-item">
+          <span>06</span>
+          <h4>Experts Contacts</h4>
+          <p>Parents can access a directory of professionals, including doctors, therapists, educators, and advocates, and initiate contact through the platform, creating opportunities for personalized assistance and collaboration.</p>
+        </div>
+      </div><!-- Card Item -->
+    </div>
+  </div>
+</section><!-- /Why Us Section -->
+
+
+    <!-- Call To Action Section -->
+    <section id="call-to-action" class="call-to-action section dark-background">
+
+      <img src="{% static  'website/assets/img/cta.png'%}" alt="">
+
+      <div class="container">
+        <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="100">
+          <div class="col-xl-10">
+            <div class="text-center">
+              <h3>Empower Your Child's Journey Today!</h3>
+              <a class="cta-btn" href="#">Register</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /Call To Action Section -->
+
+          
+  </main>
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static  'website/assets/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/php-email-form/validate.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/aos/aos.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/glightbox/js/glightbox.min.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/purecounter/purecounter_vanilla.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/isotope-layout/isotope.pkgd.min.js'%}"></script>
+  <script src="{% static  'website/assets/vendor/swiper/swiper-bundle.min.js'%}"></script>
+
+  <!-- Main JS File -->
+  <script src="{% static  'website/assets/js/main.js'%}"></script>
+
+</body>
+{% endblock %}

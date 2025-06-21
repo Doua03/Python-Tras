@@ -1,0 +1,198 @@
+
+/*--------------------------------------------------------------
+# Navigation Menu
+--------------------------------------------------------------*/
+/* Navmenu - Desktop */
+@media (min-width: 1200px) {
+    .navmenu {
+      padding: 0;
+    }
+  
+    .navmenu ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      list-style: none;
+      align-items: center;
+    }
+  
+    .navmenu li {
+      position: relative;
+    }
+  
+    .navmenu a,
+    .navmenu a:focus,
+    .navmenu a:focus-visible {
+      color: var(--nav-color, #333); /* Fallback to #333 */
+      padding: 18px 15px;
+      font-size: 13px;
+      font-family: var(--nav-font, Arial, sans-serif); /* Fallback font */
+      text-transform: uppercase;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      white-space: nowrap;
+      transition: color 0.3s ease;
+    }
+  
+    .navmenu a i,
+    .navmenu a:focus i,
+    .navmenu a:focus-visible i {
+      font-size: 12px;
+      line-height: 0;
+      margin-left: 5px;
+      transition: transform 0.3s ease;
+    }
+  
+    .navmenu li:last-child a {
+      padding-right: 0;
+    }
+  
+    .navmenu li:hover > a,
+    .navmenu .active,
+    .navmenu .active:focus,
+    .navmenu .active:focus-visible {
+      color: var(--nav-hover-color, #007bff); /* Fallback to #007bff */
+    }
+  
+    .navmenu .dropdown ul {
+      margin: 0;
+      padding: 10px 0;
+      background: var(--nav-dropdown-background-color, #fff); /* Fallback */
+      display: block;
+      position: absolute;
+      visibility: hidden;
+      left: 14px;
+      top: 130%;
+      opacity: 0;
+      transition: opacity 0.3s ease, top 0.3s ease;
+      border-radius: 4px;
+      z-index: 99;
+      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+    }
+  
+    .navmenu .dropdown ul li {
+      min-width: 200px;
+    }
+  
+    .navmenu .dropdown ul a {
+      padding: 10px 20px;
+      font-size: 15px;
+      text-transform: none;
+      color: var(--nav-dropdown-color, #333); /* Fallback */
+    }
+  
+    .navmenu .dropdown ul a:hover,
+    .navmenu .dropdown ul li:hover > a {
+      color: var(--nav-dropdown-hover-color, #007bff); /* Fallback */
+    }
+  
+    .navmenu .dropdown:hover > ul {
+      opacity: 1;
+      top: 100%;
+      visibility: visible;
+    }
+  
+    .navmenu .dropdown .dropdown ul {
+      top: 0;
+      left: -90%;
+      visibility: hidden;
+    }
+  
+    .navmenu .dropdown .dropdown:hover > ul {
+      opacity: 1;
+      top: 0;
+      left: -100%;
+      visibility: visible;
+    }
+  }
+
+  .navmenu .btn-get-started {
+    color: #000;
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 1px;
+    display: inline-block;
+    padding: 8px 40px;
+    margin: 30px 0 0 0;
+    border-radius: 50px;
+    transition: 0.5s;
+    border: 2px solid #007bff;
+  }
+  
+  .navmenu .btn-get-started:hover {
+    color: #ffffff;
+    background: #007bff;
+    border-color:  #007bff;
+  }
+  
+  
+  /* Navmenu - Mobile */
+  @media (max-width: 1199px) {
+    .mobile-nav-toggle {
+      color: var(--nav-color, #333); /* Fallback */
+      font-size: 28px;
+      line-height: 0;
+      margin-right: 10px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+  
+    .navmenu {
+      padding: 0;
+      z-index: 9997;
+    }
+  
+    .navmenu ul {
+      display: none;
+      list-style: none;
+      position: absolute;
+      inset: 60px 20px 20px 20px;
+      padding: 10px 0;
+      margin: 0;
+      border-radius: 6px;
+      background-color: var(--nav-mobile-background-color, rgba(255, 255, 255, 0.95)); /* Fallback */
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 9998;
+      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+    }
+  
+    .navmenu a,
+    .navmenu a:focus,
+    .navmenu a:focus-visible {
+      color: var(--nav-dropdown-color, #333); /* Fallback */
+      padding: 10px 20px;
+      font-family: var(--nav-font, Arial, sans-serif); /* Fallback font */
+      font-size: 17px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      white-space: nowrap;
+      transition: color 0.3s ease;
+    }
+  
+    .mobile-nav-active .mobile-nav-toggle {
+      color: #fff;
+      position: absolute;
+      font-size: 32px;
+      top: 15px;
+      right: 15px;
+      z-index: 9999;
+    }
+  
+    .mobile-nav-active .navmenu {
+      position: fixed;
+      inset: 0;
+      background: rgba(33, 37, 41, 0.8);
+      transition: background 0.3s ease;
+    }
+  
+    .mobile-nav-active .navmenu > ul {
+      display: block;
+    }
+  }
+  
+  

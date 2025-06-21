@@ -1,0 +1,338 @@
+{% extends 'mainbase.html' %}
+{% load static %}
+
+{% block title %}
+TRAS - Empowering Lives
+{% endblock %}
+
+{% block icons %}
+  <!-- Favicons -->
+  <link href="{% static 'website/assets/img/logo.png' %}" rel="icon">
+  <link href="{% static 'website/assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+{% endblock %}
+
+{% block fonts %}
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% endblock %}
+
+{% block css %}
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'website/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_css %}
+  <!-- Main CSS File -->
+  <link href="{% static 'website/assets/css/consultation.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<body class="index-page">
+
+  <main class="main">
+    
+    <!-- Hero Section -->
+    <section id="Services" class="hero section dark-background">
+      <img src="{% static 'website/assets/img/hero-bg.png' %}" alt="" data-aos="fade-in">
+      <div class="container text-center" data-aos="fade-up" data-aos-delay="100">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <h2>Consultation</h2>
+            <p>Reserve an online or offline consultation with a specialist who will help you discover and learn more about your child's disease.</p>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Hero Section -->
+
+    <!-- Services Section -->
+    <section id="services" class="services section">
+      <div class="container">
+        <div class="row g-5">
+          {% for doctor in doctors %}
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+              <div class="service-item item-cyan position-relative">
+                  <div>
+                      <h3>{{ doctor.user.username }}</h3>
+                      <p>{{ doctor.specialization }}</p>
+                      <p>Location: {{ doctor.clinic_address }}</p>
+                      <p>Phone Number: (+216) {{ doctor.contact_number }}</p>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#consultationModal"
+                              data-doctor-id="{{ doctor.id }}"
+                              data-doctor-name="{{ doctor.user.username }}"
+                              data-doctor-specialization="{{ doctor.specialization }}"
+                              data-doctor-location="{{ doctor.clinic_address }}"
+                              data-doctor-phone="{{ doctor.contact_number }}"
+                              data-doctor-start-time="{{ doctor.start_time|time:'h:i A' }}"
+                              data-doctor-end-time="{{ doctor.end_time|time:'h:i A' }}">
+                          Book Consultation
+                      </button>
+                  </div>
+              </div>
+          </div>
+      {% endfor %}
+        </div>
+             {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+      </div>
+    </section><!-- /Services Section -->
+
+    <!-- Consultation Modal Form -->
+    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="consultationModalLabel">Book a Consultation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="consultationForm" method="POST" action="{% url 'book_consultation' %}">
+              {% csrf_token %}
+              <input type="hidden" name="doctor_id" id="doctor_id">
+
+              <!-- Doctor Details -->
+              <div class="mb-3">
+                <h5 id="doctor_name"></h5>
+                <p id="doctor_specialization"></p>
+                <p id="doctor_location"></p>
+                <p id="doctor_phone"></p>
+              </div>
+
+              <!-- Consultation Type Selection -->
+              <div class="mb-3">
+                <label for="consultation_type" class="form-label">Consultation Type</label>
+                <select class="form-select" name="consultation_type" id="consultation_type">
+                  <option value="online">Online</option>
+                  <option value="offline">Offline</option>
+                </select>
+              </div>
+
+              <!-- Consultation Time Section -->
+              <div class="mb-3" id="consultation_time_div">
+                <label for="consultation_time" class="form-label">Consultation Time</label>
+                <div id="time_slots" class="d-flex flex-wrap" >
+                  <!-- Dynamic time slots will be populated here -->
+                </div>
+              </div>
+              
+              <button type="submit" class="btn btn-primary">Book Now</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div><!-- /Consultation Modal -->
+
+  </main>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'website/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/php-email-form/validate.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'website/assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="{% static 'website/assets/js/main.js' %}"></script>
+  <script>
+    // Make the doctor_slots JSON object available in JavaScript
+    const doctorSlots = JSON.parse('{{ doctor_slots|safe }}');
+
+    const convertTo24HourFormat = (timeStr) => {
+        if (!timeStr) {
+            console.error("Time string is undefined or empty.");
+            return null;
+        }
+
+        // Split the time string into components
+        const [time, meridian] = timeStr.split(" ");
+        if (!time || !meridian) {
+            console.error("Invalid time format. Expected format: 'HH:MM AM/PM'. Received:", timeStr);
+            return null;
+        }
+
+        // Split hours and minutes
+        const [hours, minutes] = time.split(":").map(Number);
+        if (isNaN(hours) || isNaN(minutes)) {
+            console.error("Invalid hours or minutes. Received:", timeStr);
+            return null;
+        }
+
+        // Convert to 24-hour format
+        let hours24 = hours;
+        if (meridian === "PM" && hours !== 12) hours24 += 12;
+        if (meridian === "AM" && hours === 12) hours24 = 0;
+
+        return `${hours24.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    };
+
+    const convertTo12HourFormat = (time24) => {
+        if (!time24) {
+            console.error("Time string is undefined or empty.");
+            return null;
+        }
+
+        // Split the time string into components
+        const [hours, minutes] = time24.split(":").map(Number);
+        if (isNaN(hours) || isNaN(minutes)) {
+            console.error("Invalid hours or minutes. Received:", time24);
+            return null;
+        }
+
+        // Convert to 12-hour format
+        const meridian = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+        return `${displayHours}:${displayMinutes} ${meridian}`;
+    };
+
+    const populateTimeSlots = (startTime, endTime, bookedSlots) => {
+        if (!startTime || !endTime) {
+            console.error("Start or end time is invalid.");
+            $('#time_slots').html('<p class="text-danger">No available time slots.</p>');
+            return;
+        }
+
+        const normalizedStartTime = convertTo24HourFormat(startTime);
+        const normalizedEndTime = convertTo24HourFormat(endTime);
+
+        if (!normalizedStartTime || !normalizedEndTime) {
+            console.error("Failed to normalize start or end time. Start:", startTime, "End:", endTime);
+            $('#time_slots').html('<p class="text-danger">Invalid time format.</p>');
+            return;
+        }
+
+        const timeSlotsContainer = $('#time_slots');
+        timeSlotsContainer.empty(); // Clear existing time slots
+
+        const startDate = new Date(`2025-01-01T${normalizedStartTime}`);
+        const endDate = new Date(`2025-01-01T${normalizedEndTime}`);
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            console.error("Invalid time format after parsing. Start:", normalizedStartTime, "End:", normalizedEndTime);
+            return;
+        }
+
+        // Normalize booked slots to 12-hour format
+        const normalizedBookedSlots = bookedSlots.map(slot => convertTo12HourFormat(convertTo24HourFormat(slot)));
+
+        // Loop to generate time slots in 30-minute intervals
+        let currentTime = startDate;
+        while (currentTime < endDate) {
+            const hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes();
+            const meridian = hours >= 12 ? 'PM' : 'AM';
+
+            // Convert to 12-hour format
+            const displayHours = hours % 12 || 12;
+            const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+            // Format time string
+            const timeSlot = `${displayHours}:${displayMinutes} ${meridian}`;
+
+            // Check if the slot is already booked
+            if (!normalizedBookedSlots.includes(timeSlot)) {
+                // Append time slot to container
+                const timeSlotButton = `
+                    <button type="button" class="btn btn-outline-primary time-slot" data-time="${timeSlot}">
+                        ${timeSlot}
+                    </button>
+                `;
+                timeSlotsContainer.append(timeSlotButton);
+            }
+            console.log("Booked Slots:", bookedSlots);
+console.log("Generated Time Slot:", timeSlot);
+
+
+            // Increment by 30 minutes
+            currentTime.setMinutes(currentTime.getMinutes() + 30);
+        }
+    };
+
+    $('#consultationModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var doctorId = button.data('doctor-id');
+        var doctorName = button.data('doctor-name');
+        var doctorSpecialization = button.data('doctor-specialization');
+        var doctorLocation = button.data('doctor-location');
+        var doctorPhone = button.data('doctor-phone');
+        var doctorStartTime = button.data('doctor-start-time');
+        var doctorEndTime = button.data('doctor-end-time');
+
+        // Fetch booked slots for the doctor from the template data
+        var bookedSlots = doctorSlots[doctorId] || [];
+
+        var modal = $(this);
+        modal.find('#doctor_id').val(doctorId);
+        modal.find('#doctor_name').text('Dr. ' + doctorName);
+        modal.find('#doctor_specialization').text('Specialization: ' + doctorSpecialization);
+        modal.find('#doctor_location').text('Location: ' + doctorLocation);
+        modal.find('#doctor_phone').text('Phone: (+216) ' + doctorPhone);
+
+        // Populate time slots, excluding booked slots
+        populateTimeSlots(doctorStartTime, doctorEndTime, bookedSlots);
+    });
+    let selectedTimeSlot = null; // Variable to store the selected time slot
+
+// Handle time slot button clicks
+document.addEventListener("click", function (e) {
+    if (e.target && e.target.classList.contains("time-slot")) {
+        // Remove 'active' class from previously selected slot
+        document.querySelectorAll(".time-slot").forEach((btn) => btn.classList.remove("active"));
+
+        // Add 'active' class to the clicked slot
+        e.target.classList.add("active");
+
+        // Save the selected time
+        selectedTimeSlot = e.target.dataset.time;
+        console.log("Selected Time Slot: ", selectedTimeSlot);
+    }
+});
+
+// Ensure the selected time is added to the form submission
+document.getElementById("consultationForm").addEventListener("submit", function (event) {
+    if (!selectedTimeSlot) {
+        event.preventDefault();
+        alert("Please select a consultation time.");
+        return;
+    }
+
+    // Add the selected time slot to the form as a hidden input
+    const existingInput = document.getElementById("selected_time");
+    if (!existingInput) {
+        const timeInput = document.createElement("input");
+        timeInput.type = "hidden";
+        timeInput.name = "consultation_time";
+        timeInput.id = "selected_time";
+        timeInput.value = selectedTimeSlot;
+        this.appendChild(timeInput);
+    } else {
+        existingInput.value = selectedTimeSlot;
+    }
+});
+</script>
+</body>
+{% endblock %}

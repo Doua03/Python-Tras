@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  
+  <!-- Favicons -->
+  <link href="{% static 'website/assets/img/logo.png' %}" rel="icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS -->
+  <link href="{% static 'website/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'website/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="{% static 'website/assets/css/authentification.css' %}?v=2" rel="stylesheet">
+</head>
+
+<body class="index-page">
+  <!-- Header Section -->
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid d-flex align-items-center">
+      <a href="{% url 'login' %}" class="logo d-flex align-items-center me-auto">
+        <img src="{% static 'website/assets/img/logo.png' %}" alt="TRAS Logo">
+      </a>
+      <i class="mobile-nav-toggle bi bi-list d-xl-none"></i>
+    </div>
+  </header>
+
+  <!-- Main Content Section -->
+  <main class="main">
+    <section id="about" class="about section">
+      <div class="auth-white">
+        <h1>Log in to your account</h1>
+        
+        <!-- Login Form -->
+        <form method="POST" class="registration-form">
+          {% csrf_token %}
+          
+          <!-- Render form fields dynamically -->
+          {{ form.as_p }}
+          
+          <!-- Error display for form-wide validation errors 
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          {% if messages %}
+          <div class="alert alert-info">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+          {% endif %} -->
+          
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-cta">Login</button>
+        </form>
+      </div>
+
+      <!-- Informational Section -->
+      <div class="auth-gradient">
+        <h1>Welcome Back!</h1>
+        <p>Please sign into your account with the given details to continue.</p>
+        <p>New here? <a href="{% url 'authentification' %}">Sign Up</a></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Vendor JS -->
+  <script src="{% static 'website/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>
